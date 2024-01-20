@@ -1,0 +1,4 @@
+assets/elf_pack/*
+*.pyc
+config/__pycache__/*
+actors/__pycache__/*
