@@ -14,6 +14,9 @@ class Config:
     DEFAULT_LEVEL_SIZE = SCREEN_WIDTH
     FPS = 30
     
+    # Server
+    SERVER_ENDPOINT = "35.167.252.128"
+
     # Player
     PLAYER_START = (170, 120)
     PLAYER_ANIMATION_TIMER = 100
