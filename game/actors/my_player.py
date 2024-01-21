@@ -9,4 +9,6 @@ class MyPlayer(BasePlayer):
 
     def update(self, collision_group):
         self.animate_player.animate(self)
-        self.player_action.update(self, self.animate_player, collision_group)
+
+    def update_pos(self, collision_group, delta_time):
+        self.player_action.update_pos(self, self.animate_player, collision_group, delta_time)

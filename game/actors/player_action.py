@@ -40,23 +40,25 @@ class PlayerAction():
             else:
                 animator.player_frames = animator.animation_map[f"{action}"]
             
-            if keys[cfg.key_down] or keys[cfg.key_left]:
+            if keys[cfg.key_down] or keys[cfg.key_left] or keys[cfg.key_right]:
                 player.speed = cfg.DIAG_SPEED
             else:
                 player.speed = cfg.SPEED
         elif keys[cfg.key_down] and player.rect.y < cfg.DEFAULT_LEVEL_SIZE * 1.5 - 55:
             player.direction_y = 1
+            player.speed = cfg.SPEED
             if player.flipped:
                 animator.player_frames = animator.animation_map[f"{action}_flipped"]
             else:
                 animator.player_frames = animator.animation_map[f"{action}"]
 
-            if keys[cfg.key_right] or keys[cfg.key_right]:
+            if keys[cfg.key_right] or keys[cfg.key_left]:
                 player.speed = cfg.DIAG_SPEED
             else:
                 player.speed = cfg.SPEED
         else:
             player.direction_y = 0
+            player.speed = cfg.SPEED
 
         if keys[cfg.key_right] and player.rect.x < cfg.DEFAULT_LEVEL_SIZE * 1.5 - 40:
             player.direction_x = 1
@@ -101,16 +103,15 @@ class PlayerAction():
                 self.player_moving_action(player, keys, animator, "attack")
             else:
                 self.player_moving_action(player, keys, animator, "walk")
-            
-
-    def update(self, player, animator, collision_group):
+    
+    def update_pos(self, player, animator, collision_group, delta_time):
         if cfg.MOVEMENT_TYPE == "keyboard":
             self.keyboard_input(player, animator)
-            player.rect.x += player.direction_x * player.speed
-            player.rect.y += player.direction_y * player.speed 
+            player.rect.x += player.direction_x * delta_time * 100 * player.speed
+            player.rect.y += player.direction_y * delta_time * 100 * player.speed
             if self.check_collision(player, collision_group):
-                player.rect.x -= player.direction_x * player.speed
-                player.rect.y -= player.direction_y * player.speed
+                player.rect.x -= player.direction_x * delta_time * 101 * player.speed
+                player.rect.y -= player.direction_y * delta_time * 101 * player.speed
 
         elif cfg.MOVEMENT_TYPE == "mouse" and player.move_to:
             if self.move_by_coordinates(player, collision_group):

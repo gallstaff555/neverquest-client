@@ -68,12 +68,12 @@ class Game():
     def update_server(self, payload):
         self.data_from_server = json.loads(self.client.send_message(cfg.SERVER_ENDPOINT, 5000, f"{payload}"))
         
-    def update_other_players(self, data):
+    def update_other_players(self, data, delta_time):
         for key in data:
             if key == self.player.name:
                 pass
             elif key in self.other_players:
-                self.other_players[key].update_pos(ast.literal_eval(data[key]["pos"]), data[key]["flipped"], data[key]["moving"], data[key]["attacking"])
+                self.other_players[key].update_pos(ast.literal_eval(data[key]["pos"]), data[key]["flipped"], data[key]["moving"], data[key]["attacking"], delta_time)
             else: # add new player
                 print(f"New player {key} joined.")
                 race = data[key]["race"]
@@ -96,9 +96,15 @@ class Game():
 
     def start_game(self):
 
+        last_time = pygame.time.get_ticks()
+
         while self.running: 
 
             pygame.time.Clock().tick(cfg.FPS)
+
+            current_time = pygame.time.get_ticks()
+            delta_time = (current_time - last_time) / 1000.0  # Delta time in seconds
+            last_time = current_time
 
             if (threading.active_count() < 2):
                 if not self.connected_to_server:
@@ -121,7 +127,7 @@ class Game():
                     }
                     thread = threading.Thread(target=self.update_server, args=(payload,))
                     thread.start()
-                    self.update_other_players(self.data_from_server)
+                    self.update_other_players(self.data_from_server, delta_time)
                 
 
             # Player should face the mouse pointer
@@ -143,6 +149,7 @@ class Game():
                         world_x, world_y = mouse_x / cfg.CAMERA_SCALE + cam_x, mouse_y / cfg.CAMERA_SCALE + cam_y
                         self.player.move_to = (round(world_x), round(world_y))
 
+            self.player.update_pos(self.collision_group, delta_time)
             self.camera_group.update(self.collision_group)
             self.camera_group.center((self.player.rect.center))
             self.camera_group.draw(self.surface)
