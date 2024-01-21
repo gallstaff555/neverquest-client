@@ -66,7 +66,7 @@ class Game():
         thread.start()
 
     def update_server(self, payload):
-        self.data_from_server = json.loads(self.client.send_message('localhost', 5000, f"{payload}"))
+        self.data_from_server = json.loads(self.client.send_message(cfg.SERVER_ENDPOINT, 5000, f"{payload}"))
         
     def update_other_players(self, data):
         for key in data:
