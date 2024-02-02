@@ -15,8 +15,10 @@ class Config:
     FPS = 60
     
     # Server
-    #SERVER_ENDPOINT = "35.167.252.128"
-    SERVER_ENDPOINT = 'localhost'
+    if TEST == True:
+        SERVER_ENDPOINT = "35.167.252.128"
+    else:
+        SERVER_ENDPOINT = 'localhost'
 
     # Player
     PLAYER_START = (170, 120)
