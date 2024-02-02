@@ -12,7 +12,7 @@ cfg = Config()
 class Game():
     def __init__(self, name, player_class, race, color):
 
-        self.connected_to_server = False
+        #self.connected_to_server = False
         self.data_from_server = {}
         self.client = Client()
         self.other_players = {}
@@ -57,16 +57,16 @@ class Game():
         base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
         return os.path.join(base_path, relative_path)
 
-    def disconnect_from_server(self):
-        payload = {
-            "header": "disconnect",
-            "name": f"{self.player.name}"
-        }
-        thread = threading.Thread(target=self.update_server, args=(payload,))
-        thread.start()
+    # def disconnect_from_server(self):
+    #     payload = {
+    #         "header": "disconnect",
+    #         "name": f"{self.player.name}"
+    #     }
+    #     thread = threading.Thread(target=self.update_server, args=(payload,))
+    #     thread.start()
 
-    def update_server(self, payload):
-        self.data_from_server = json.loads(self.client.send_message(cfg.SERVER_ENDPOINT, 5000, f"{payload}"))
+    # def update_server(self, payload):
+    #     self.data_from_server = json.loads(self.client.send_message(cfg.SERVER_ENDPOINT, 5000, f"{payload}"))
         
     def update_other_players(self, data, delta_time):
         for key in data:
@@ -106,29 +106,8 @@ class Game():
             delta_time = (current_time - last_time) / 1000.0  # Delta time in seconds
             last_time = current_time
 
-            if (threading.active_count() < 2):
-                if not self.connected_to_server:
-                    #self.connect_to_server()
-                    header = "connect"
-                    self.connected_to_server = True
-                else:
-                    header = "update"
-                    payload = {
-                        "header": f"{header}",
-                        "name": f"{self.player.name}",
-                        "player_class": f"{self.player.player_class}",
-                        "race": f"{self.player.race}",
-                        "pos": f"{(self.player.rect.x, self.player.rect.y)}",
-                        "flipped": f"{self.player.flipped}",
-                        "appearance": f"{self.player.race}", 
-                        "moving": f"{self.player.moving}",
-                        "attacking": f"{self.player.attacking}",
-                        "last_update": f"{int(time.time())}"
-                    }
-                    thread = threading.Thread(target=self.update_server, args=(payload,))
-                    thread.start()
-                    self.update_other_players(self.data_from_server, delta_time)
-                
+            self.client.sync_server(self.player, cfg.SERVER_ENDPOINT, cfg.PORT)
+            self.update_other_players(self.client.get_data_from_server(), delta_time)
 
             # Player should face the mouse pointer
             mouse_x, mouse_y = pygame.mouse.get_pos()
@@ -140,7 +119,7 @@ class Game():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
-                    self.disconnect_from_server()
+                    self.client.disconnect_from_server(self.player.name, cfg.SERVER_ENDPOINT, cfg.PORT)
                     pygame.quit()
                     sys.exit()
                 elif event.type == pygame.MOUSEBUTTONDOWN:
@@ -154,13 +133,9 @@ class Game():
             self.camera_group.center((self.player.rect.center))
             self.camera_group.draw(self.surface)
 
-            # if cfg.TEST:
-            #     self.image_border = self.player.animate_player.player_frames[0].copy()
-            #     pygame.draw.rect(self.surface, (255,0,0), self.player.rect, 4)
-
             self.scale(self.surface, self.screen.get_size(), self.screen)
             pygame.display.flip()
 
-        self.disconnect_from_server()
+        self.client.disconnect_from_server(self.player.name)
         pygame.quit()
         sys.exit()

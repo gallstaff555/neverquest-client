@@ -19,6 +19,8 @@ class Config:
         SERVER_ENDPOINT = "35.167.252.128"
     else:
         SERVER_ENDPOINT = 'localhost'
+    
+    PORT = 5000
 
     # Player
     PLAYER_START = (170, 120)
