@@ -3,7 +3,7 @@
 import socket,threading,json,time
 
 class Client():
-    
+
     def __init__(self):
         self.connected_to_server = False
         self.data_from_server = {}

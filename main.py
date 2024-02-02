@@ -13,11 +13,11 @@
 
 
 import argparse
-
 from game.game import Game
 
 if __name__ == '__main__':
     #create character with given name, race and color
+
     parser = argparse.ArgumentParser(description='Game client arguments')
     parser.add_argument('--name', type=str, default="default_name", required=True)
     parser.add_argument('--player_class', type=str, default="archer", required=True)

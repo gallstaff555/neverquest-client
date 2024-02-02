@@ -3,9 +3,9 @@
 import pygame, pytmx, pyscroll
 from game.config.config import Config
 from game.actors.my_player import MyPlayer
-from game.actors.other_player import OtherPlayer
+from game.actors.player_tracker import PlayerTracker
 from client.client import Client
-import os,sys,time,ast,threading,json
+import os,sys
 
 cfg = Config()
 
@@ -15,7 +15,7 @@ class Game():
         #self.connected_to_server = False
         self.data_from_server = {}
         self.client = Client()
-        self.other_players = {}
+        #self.other_players = {}
 
         pygame.init()
         self.screen = pygame.display.set_mode((cfg.SCREEN_WIDTH * cfg.CAMERA_SCALE, cfg.SCREEN_HEIGHT * cfg.CAMERA_SCALE), pygame.RESIZABLE)
@@ -33,6 +33,7 @@ class Game():
         animation_path = f"../assets/{race}/{player_class}/color_{color}"
         self.player = MyPlayer(name, player_class, race, cfg.PLAYER_START, animation_path, cfg.DEFAULT_ANIMATIONS)
         self.camera_group.add(self.player)
+        self.player_tracker = PlayerTracker(self.player, self.camera_group)
 
         # set up invisible collision sprites
         self.collision_group = pygame.sprite.Group()
@@ -57,43 +58,6 @@ class Game():
         base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
         return os.path.join(base_path, relative_path)
 
-    # def disconnect_from_server(self):
-    #     payload = {
-    #         "header": "disconnect",
-    #         "name": f"{self.player.name}"
-    #     }
-    #     thread = threading.Thread(target=self.update_server, args=(payload,))
-    #     thread.start()
-
-    # def update_server(self, payload):
-    #     self.data_from_server = json.loads(self.client.send_message(cfg.SERVER_ENDPOINT, 5000, f"{payload}"))
-        
-    def update_other_players(self, data, delta_time):
-        for key in data:
-            if key == self.player.name:
-                pass
-            elif key in self.other_players:
-                self.other_players[key].update_pos(ast.literal_eval(data[key]["pos"]), data[key]["flipped"], data[key]["moving"], data[key]["attacking"], delta_time)
-            else: # add new player
-                print(f"New player {key} joined.")
-                race = data[key]["race"]
-                player_class = data[key]["player_class"]
-                color = 3
-                animation_path = f"../assets/{race}/{player_class}/color_{color}"
-                new_player = OtherPlayer(key, data[key]["player_class"], data[key]["race"], ast.literal_eval((data[key]["pos"])), animation_path, cfg.DEFAULT_ANIMATIONS)
-                self.other_players[key] = new_player
-                self.camera_group.add(new_player)
-        # look for players that disconnected by comparing players to keys not found
-        players_to_delete = []
-        for player in self.other_players:  
-            if player not in data:
-                print(f"{player} is no longer connected!")
-                players_to_delete.append(player)
-        for player in players_to_delete:  
-            delete_player = self.other_players[player]
-            self.camera_group.remove(delete_player)
-            del self.other_players[player]
-
     def start_game(self):
 
         last_time = pygame.time.get_ticks()
@@ -107,7 +71,7 @@ class Game():
             last_time = current_time
 
             self.client.sync_server(self.player, cfg.SERVER_ENDPOINT, cfg.PORT)
-            self.update_other_players(self.client.get_data_from_server(), delta_time)
+            self.player_tracker.update_other_players(self.client.get_data_from_server(), delta_time)
 
             # Player should face the mouse pointer
             mouse_x, mouse_y = pygame.mouse.get_pos()
@@ -118,7 +82,7 @@ class Game():
                 self.player.flipped = False
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    running = False
+                    self.running = False
                     self.client.disconnect_from_server(self.player.name, cfg.SERVER_ENDPOINT, cfg.PORT)
                     pygame.quit()
                     sys.exit()
@@ -128,6 +92,7 @@ class Game():
                         world_x, world_y = mouse_x / cfg.CAMERA_SCALE + cam_x, mouse_y / cfg.CAMERA_SCALE + cam_y
                         self.player.move_to = (round(world_x), round(world_y))
 
+            # update player positions and draw to screen 
             self.player.update_pos(self.collision_group, delta_time)
             self.camera_group.update(self.collision_group)
             self.camera_group.center((self.player.rect.center))
