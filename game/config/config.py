@@ -15,7 +15,7 @@ class Config:
     FPS = 60
     
     # Server
-    if TEST == True:
+    if TEST != True:
         SERVER_ENDPOINT = "35.167.252.128"
     else:
         SERVER_ENDPOINT = 'localhost'
