@@ -12,10 +12,7 @@ cfg = Config()
 class Game():
     def __init__(self, name, player_class, race, color):
 
-        #self.connected_to_server = False
-        self.data_from_server = {}
         self.client = Client()
-        #self.other_players = {}
 
         pygame.init()
         self.screen = pygame.display.set_mode((cfg.SCREEN_WIDTH * cfg.CAMERA_SCALE, cfg.SCREEN_HEIGHT * cfg.CAMERA_SCALE), pygame.RESIZABLE)
@@ -46,7 +43,6 @@ class Game():
             sprite.image = sprite_image
             sprite.rect = sprite.image.get_rect(center = (obj.x, obj.y))
             sprite.mask = sprite_mask
-            
             self.collision_group.add(sprite)
 
         #pygame set up

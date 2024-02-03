@@ -6,7 +6,7 @@ class Client():
 
     def __init__(self):
         self.connected_to_server = False
-        self.data_from_server = {}
+        self.other_player_data = {}
 
     def send_message(self, host, port, message):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
@@ -47,34 +47,8 @@ class Client():
                 thread.start()
 
     def update_server(self, server, port, payload):
-        self.data_from_server = json.loads(self.send_message(server, port, f"{payload}"))
+        self.other_player_data = json.loads(self.send_message(server, port, f"{payload}"))
         
     def get_data_from_server(self):
-        return self.data_from_server
+        return self.other_player_data
     
-    # def update_other_players(self, data, delta_time, my_player, other_players, camera_group, animations):
-    #     for key in data:
-    #         if key == my_player:
-    #             pass
-    #         elif key in other_players:
-    #             other_players[key].update_pos(ast.literal_eval(data[key]["pos"]), data[key]["flipped"], data[key]["moving"], data[key]["attacking"], delta_time)
-    #         else: # add new player
-    #             print(f"New player {key} joined.")
-    #             race = data[key]["race"]
-    #             player_class = data[key]["player_class"]
-    #             color = 3
-    #             animation_path = f"../assets/{race}/{player_class}/color_{color}"
-    #             new_player = OtherPlayer(key, data[key]["player_class"], data[key]["race"], ast.literal_eval((data[key]["pos"])), animation_path, animations)
-    #             other_players[key] = new_player
-    #             camera_group.add(new_player)
-
-    #     # look for players that disconnected by comparing players to keys not found
-    #     players_to_delete = []
-    #     for player in other_players:  
-    #         if player not in data:
-    #             print(f"{player} is no longer connected!")
-    #             players_to_delete.append(player)
-    #     for player in players_to_delete:  
-    #         delete_player = other_players[player]
-    #         camera_group.remove(delete_player)
-    #         del other_players[player]
