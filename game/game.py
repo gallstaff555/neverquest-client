@@ -66,7 +66,7 @@ class Game():
             delta_time = (current_time - last_time) / 1000.0  # Delta time in seconds
             last_time = current_time
 
-            self.client.sync_server(self.player, cfg.SERVER_ENDPOINT, cfg.PORT)
+            self.client.sync_server(self.player, cfg.GAME_SERVER_ENDPOINT, cfg.GAME_PORT)
             self.player_tracker.update_other_players(self.client.get_data_from_server(), delta_time)
 
             # Player should face the mouse pointer
@@ -79,7 +79,7 @@ class Game():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
-                    self.client.disconnect_from_server(self.player.name, cfg.SERVER_ENDPOINT, cfg.PORT)
+                    self.client.disconnect_from_server(self.player.name, cfg.GAME_SERVER_ENDPOINT, cfg.GAME_PORT)
                     pygame.quit()
                     sys.exit()
                 elif event.type == pygame.MOUSEBUTTONDOWN:

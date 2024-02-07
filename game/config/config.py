@@ -18,11 +18,14 @@ class Config:
     
     # Server
     if TEST != True:
-        SERVER_ENDPOINT = "35.167.252.128"
+        GAME_SERVER_ENDPOINT = '35.167.252.128'
     else:
-        SERVER_ENDPOINT = 'localhost'
+        GAME_SERVER_ENDPOINT = 'localhost'
     
-    PORT = 5000
+    GAME_PORT = 5000
+    
+    ACCOUNT_SERVER = 'localhost'
+    ACCOUNT_PORT = 8080
 
     # Player
     PLAYER_START = (170, 120)
