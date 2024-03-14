@@ -22,7 +22,7 @@ class Config:
     else:
         GAME_SERVER_ENDPOINT = 'localhost'
     
-    GAME_PORT = 5000
+    GAME_PORT = 5001
     
     ACCOUNT_SERVER = 'localhost'
     ACCOUNT_PORT = 8080
