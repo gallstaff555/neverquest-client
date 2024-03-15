@@ -27,6 +27,9 @@ class Config:
     ACCOUNT_SERVER = 'localhost'
     ACCOUNT_PORT = 8080
 
+    # Security 
+    SECURITY_ENABLED = False
+
     # Player
     PLAYER_START = (170, 120)
     PLAYER_ANIMATION_TIMER = 100

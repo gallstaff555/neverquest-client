@@ -47,8 +47,39 @@ class Account():
         except Exception as e:
             print(f"Unexpected error occurred: \n{e}")
 
+    def request_token(self):
+        payload = {}
+        payload['username'] = input('Enter your account name: ')
+        payload['password'] = input('Enter your password: ')
+        try:
+            res = self._post_request('request_token', payload)
+            tokens = res.json()
+            print(res.status_code)
+            # print(res.json())
+            # print()
+            id_token = tokens['IdToken']
+            print(f'id_token: {id_token}')
+            return id_token
+        except ClientError as e:
+            print("Boto client error:")
+            print(e.response())
+        except Exception as e:
+            print(f"Unexpected error occurred: \n{e}")
+
+
+    # TODO add error handling for invalid token 
     def login(self):
-        pass
+        id_token = self.request_token()
+        payload = {}
+        payload['IdToken'] = id_token
+        try:
+            res = self._post_request('login', payload)
+            print(f'Status code: {res.status_code}')
+        except ClientError as e:
+            print("Boto client error:")
+            print(e.response())
+        except Exception as e:
+            print(f"Unexpected error occurred: \n{e}")
 
     def check_account_exists(self):
         pass
