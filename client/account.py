@@ -1,5 +1,7 @@
 #!/usr/bin/env python3 
 
+import sys
+sys.path.append('..')
 import requests,json
 from botocore.exceptions import ClientError
 from game.config.config import Config
