@@ -11,7 +11,7 @@ def main():
     print("1. Login")
     print("2. Create Account")
     print("3. Exit")
-    choice = input("Select an option:")
+    choice = input("Select an option: ")
     if choice == "1":
         user_login(user_account)
     if choice == "2":

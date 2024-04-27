@@ -55,28 +55,34 @@ class Account():
         payload['password'] = input('Enter your password: ')
         try:
             res = self._post_request('request_token', payload)
-            tokens = res.json()
-            print(res.status_code)
-            # print(res.json())
-            # print()
-            id_token = tokens['IdToken']
-            print(f'id_token: {id_token}')
-            return id_token
+            if res.status_code == 200:
+                tokens = res.json()
+                print(res.status_code)
+                id_token = tokens['IdToken']
+                #print(f'id_token: {id_token}')
+                print("Token successfully retrieved.")
+                return id_token, res.status_code
+            else:
+                return res.json(), res.status_code
         except ClientError as e:
             print("Boto client error:")
             print(e.response())
         except Exception as e:
-            print(f"Unexpected error occurred: \n{e}")
+            print(f"Unexpected error occurred: {e}")
 
 
-    # TODO add error handling for invalid token 
     def login(self):
-        id_token = self.request_token()
-        payload = {}
-        payload['IdToken'] = id_token
+
         try:
-            res = self._post_request('login', payload)
-            print(f'Status code: {res.status_code}')
+            res, res_code = self.request_token()
+            if res_code == 200:
+                payload = {}
+                payload['IdToken'] = res
+                # This tests if Cognito ID token is valid 
+                res = self._post_request('login', payload)
+                print("ID token is valid. Login successful.")
+            else: 
+                print(res)
         except ClientError as e:
             print("Boto client error:")
             print(e.response())
