@@ -21,7 +21,10 @@ def main_menu():
         main_menu()
 
 def user_login(user_account):
-    user_account.login()
+    successful = user_account.login()
+    if successful:
+        sys.exit()
+    
 
 def user_create_account(user_account):
     user_account.create_account()
