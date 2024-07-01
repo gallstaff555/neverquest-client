@@ -24,8 +24,8 @@ class Config:
     
     GAME_PORT = 5001
     
-    ACCOUNT_SERVER = 'localhost'
-    ACCOUNT_PORT = 8080
+    ACCOUNT_SERVER = 'https://iqg8dkswe1.execute-api.us-west-2.amazonaws.com/dev/'
+    ACCOUNT_PORT = 443
 
     # Security 
     SECURITY_ENABLED = False
