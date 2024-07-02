@@ -22,6 +22,7 @@ class Client():
         }
         thread = threading.Thread(target=self.update_server, args=(server, port, payload,))
         thread.start()
+        #TODO set self.connect_to_server = False and test
 
     def sync_server(self, player, server_endpoint, port):
         if (threading.active_count() < 2):

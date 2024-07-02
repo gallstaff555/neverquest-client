@@ -16,3 +16,6 @@ a.create_account()
 
 To login and get token:
 a.login()
+
+# TODO
+handle server disconnects
