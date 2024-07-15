@@ -18,10 +18,11 @@ class Config:
     
     # Server
     if TEST != True:
-        GAME_SERVER_ENDPOINT = 'localhost'
+        GAME_SERVER_ENDPOINT = 'http://127.0.0.1'
     else:
-        GAME_SERVER_ENDPOINT = 'localhost'
-    
+        GAME_SERVER_ENDPOINT = 'http://127.0.0.1'
+
+    LOGIN_PORT = 8082
     GAME_PORT = 5000
     
     ACCOUNT_SERVER = 'https://iqg8dkswe1.execute-api.us-west-2.amazonaws.com/dev/'
