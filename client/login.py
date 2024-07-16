@@ -21,9 +21,13 @@ def main_menu():
         main_menu()
 
 def user_login(user_account):
-    successful = user_account.login()
-    if successful:
+    my_characters = user_account.login()
+    if my_characters != None:
+        print(f"Characters: {my_characters[0]}")
         sys.exit()
+    # TODO create new character if none exist
+    else:
+        print("Something went wrong logging in. Unable to retrieve your character list.")
     
 
 def user_create_account(user_account):

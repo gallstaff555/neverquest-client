@@ -13,7 +13,6 @@ class Account():
         self.headers = {'Content-Type': 'application/json'}
         self.account_endpoint = cfg.ACCOUNT_SERVER
         self.game_server_endpoint = f'{cfg.GAME_SERVER_ENDPOINT}:{cfg.LOGIN_PORT}'
-        print(self.game_server_endpoint)
 
     def _post_request(self, server, endpoint, data):
         url = server + '/' + endpoint 
@@ -59,9 +58,8 @@ class Account():
             res = self._post_request(self.account_endpoint, 'account/request-token', payload)
             if res.status_code == 200:
                 tokens = res.json()
-                print(res.status_code)
                 id_token = tokens['IdToken']
-                print("Token successfully retrieved.")
+                print(f"\nToken successfully retrieved.")
                 return id_token, res.status_code
             else:
                 print(f"Get request_token failed with response code: {res.status_code}")
@@ -82,7 +80,7 @@ class Account():
             print(f"Unexpected error occurred: {e}")
 
     def login(self):
-        successful = False
+        my_characters = None
         try:
             res, res_code = self.request_token()
             if res_code == 200:
@@ -90,21 +88,17 @@ class Account():
                 payload['IdToken'] = res
                 # This tests if Cognito ID token is valid 
                 res = self._post_request(self.account_endpoint, 'account/login', payload)
-                print(payload)
-                print(f"\nID token is valid. Validating Id token with game server...")
+                #print(payload)
+                print("ID token is valid. Validating Id token with game server...")
 
-                try:
-                    res, res_code = self.get_characters(payload)
-                    if res_code == 200:
-                        print(f"\nResponse: {res.json()}, {res_code}")
-                        successful = True
-                    else:
-                        print()
-                        print("Something went wrong getting characters.")
-                        print(res)
-                except Exception as e:
-                    print(f"Unexpected error occurred: \n{e}")
-
+                res, res_code = self.get_characters(payload)
+                if res_code == 200 and res != None:
+                    characters = res.json()
+                    my_characters = characters['name']
+                else:
+                    print()
+                    print("Something went wrong getting characters.")
+                    print(characters)
             else: 
                 print(f"Login failed with response code: {res_code}")
         except ClientError as e:
@@ -113,7 +107,7 @@ class Account():
         except Exception as e:
             print(f"Unexpected error occurred: \n{e}")
 
-        return successful
+        return my_characters
 
     def check_account_exists(self):
         pass
