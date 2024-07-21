@@ -17,13 +17,13 @@ class Config:
     FPS = 60
     
     # Server
-    if TEST != True:
-        GAME_SERVER_ENDPOINT = 'http://127.0.0.1'
+    if TEST == False:
+        GAME_SERVER_ENDPOINT = '127.0.0.1'
     else:
-        GAME_SERVER_ENDPOINT = 'http://127.0.0.1'
+        GAME_SERVER_ENDPOINT = '127.0.0.1'
 
     LOGIN_PORT = 8082
-    GAME_PORT = 5000
+    GAME_PORT = 5001
     
     ACCOUNT_SERVER = 'https://iqg8dkswe1.execute-api.us-west-2.amazonaws.com/dev/'
     ACCOUNT_PORT = 443
