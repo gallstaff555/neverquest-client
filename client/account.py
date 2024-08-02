@@ -80,9 +80,6 @@ class Account():
         my_characters = None
         try:
             res = self._get_request('http://' + self.game_server_endpoint, 'game/character', payload)
-            #return res, res.status_code
-        
-            #res, res.status_code = self.get_characters(payload)
             if res.status_code == 200 and res != None:
                 characters = res.json()
                 my_characters = characters['name']
@@ -97,25 +94,35 @@ class Account():
         finally:
             return my_characters
 
-    def create_character(self, new_char_name):
+    def create_character(self, new_char_name, token):
         try: 
-            token_res, res_code = self.request_token()
-            if res_code == 200:
-                payload = {}
-                payload['IdToken'] = token_res
-                payload['NewCharName'] = new_char_name
-                print("so far so good")
-                # is successful, this returns new list of all account characters
+            payload = {}
+            payload['NewCharName'] = new_char_name
+            if token is None:
+                print("Requesting new token.")
+                token_res, res_code = self.request_token()
+                if res_code == 200:
+                    payload['IdToken'] = token_res
+                else: 
+                    print(f"Character creation failed. Unable to get auth token due to {res_code} error.")
+            else:
+                payload['IdToken'] = token
+                try:
+                    print("Token validity check disabled.")
+                    #res = self._post_request(self.account_endpoint, 'account/login', payload)
+                    #print(f"Token validity check: {res}")
+                except Exception as e:
+                    print(f"Error validating token: {e}")
+            # is successful, this returns new list of all account characters
+            try:
                 char_res = self._post_request('http://' + self.game_server_endpoint, 'game/character', payload)
-                print(f"response code: {char_res.status_code}")
-                if char_res.status_code == 200 or char_res.status_code == 201:
-                    print(f"Character {new_char_name} created successfully.")
-                    return char_res.json()
-                else:
-                    print()
-                    print("Something went wrong creating characters.")
-            else: 
-                print(f"Character creation failed. Unable to get auth token due to {res_code} error.")
+            except Exception as e:
+                print(f"Error validating token: {e}")
+            if char_res.status_code == 200 or char_res.status_code == 201:
+                return char_res.json()
+            else:
+                print()
+                print("Something went wrong creating characters.")
         except ClientError as e:
             print("Boto client error:")
             print(e.response())
@@ -124,26 +131,18 @@ class Account():
 
     def login(self):
         my_characters = None
+        token = None
         try:
-            res, res_code = self.request_token()
+            token_res, res_code = self.request_token()
             if res_code == 200:
                 payload = {}
-                payload['IdToken'] = res
+                payload['IdToken'] = token_res
+                token = token_res
                 # This tests if Cognito ID token is valid 
-                res = self._post_request(self.account_endpoint, 'account/login', payload)
-                #print(payload)
-                print(f"ID token is valid.\n")
+                print("Token validity check disabled.")
+                # res = self._post_request(self.account_endpoint, 'account/login', payload)
+                # print(f"Response: {res}\nID token is valid.\n")
                 my_characters = self.get_characters(payload)
-                # res, res_code = self.get_characters(payload)
-                # if res_code == 200 and res != None:
-                #     characters = res.json()
-                #     my_characters = characters['name']
-                # elif res_code == 404:
-                #     print(f"No characters found for this account.")
-                #     my_characters = False
-                # else:
-                #     print()
-                #     print("Something went wrong getting characters.")
             else: 
                 print(f"Login failed with response code: {res_code}")
         except ClientError as e:
@@ -151,8 +150,7 @@ class Account():
             print(e.response())
         except Exception as e:
             print(f"Unexpected error occurred: \n{e}")
-
-        return my_characters
+        return my_characters, token
 
     def check_account_exists(self):
         pass

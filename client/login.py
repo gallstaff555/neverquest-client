@@ -21,19 +21,15 @@ def main_menu(user_account):
         main_menu(user_account)
 
 def user_login(user_account):
-    my_characters = user_account.login()
-
-    # Case where no characters found
+    my_characters, token = user_account.login()
     if my_characters == False or my_characters != None:
         print("Login successful")
-        character_menu(my_characters, user_account)
-        #print(f"Characters: {my_characters[0]}")
+        character_menu(my_characters, user_account, token)
         sys.exit()
-    # TODO create new character if none exist
     else:
         print("Something went wrong logging in. Unable to retrieve your character list.")
 
-def character_menu(character_list, user_account): 
+def character_menu(character_list, user_account, token): 
     print(f"\nThis is the character menu!")
     print(f"1. Enter world with one of following characters: {character_list}")
     print("2. Create new character")
@@ -45,7 +41,7 @@ def character_menu(character_list, user_account):
         sys.exit()
         # enter world
     if choice == "2":
-        user_create_character(user_account, character_list)
+        user_create_character(user_account, character_list, token)
     if choice == "3":
         main_menu(user_account)
     if choice == "4":
@@ -58,14 +54,14 @@ def character_menu(character_list, user_account):
 def user_create_account(user_account):
     user_account.create_account()
 
-def user_create_character(user_account, character_list):
+def user_create_character(user_account, character_list, token):
     new_char_name = input("Enter name: ")
-    new_character_list = user_account.create_character(new_char_name)
+    new_character_list = user_account.create_character(new_char_name, token)
     if new_character_list != None:
         print(f"New character {new_char_name} created successfully!")
-        character_menu(new_character_list, user_account)
+        character_menu(new_character_list, user_account, token)
     else:
-        character_menu(character_list, user_account)
+        character_menu(character_list, user_account, token)
 
 def main():
     print("Welcome to Neverquest!")
