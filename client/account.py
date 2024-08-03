@@ -118,7 +118,7 @@ class Account():
             except Exception as e:
                 print(f"Error validating token: {e}")
             if char_res.status_code == 200 or char_res.status_code == 201:
-                return char_res.json()
+                return char_res.json()['name'][0]
             else:
                 print()
                 print("Something went wrong creating characters.")
