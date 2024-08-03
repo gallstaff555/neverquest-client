@@ -21,6 +21,10 @@ class Account():
     def _get_request(self, server, endpoint, data):
         url = server + '/' + endpoint 
         return requests.get(url, data=json.dumps(data), headers=self.headers)
+    
+    def _delete_request(self, server, endpoint, data):
+        url = server + '/' + endpoint 
+        return requests.delete(url, data=json.dumps(data), headers=self.headers)
         
     def create_account(self):
         payload = {}
@@ -107,12 +111,7 @@ class Account():
                     print(f"Character creation failed. Unable to get auth token due to {res_code} error.")
             else:
                 payload['IdToken'] = token
-                try:
-                    print("Token validity check disabled.")
-                    #res = self._post_request(self.account_endpoint, 'account/login', payload)
-                    #print(f"Token validity check: {res}")
-                except Exception as e:
-                    print(f"Error validating token: {e}")
+                # extra token validation disabled
             # is successful, this returns new list of all account characters
             try:
                 char_res = self._post_request('http://' + self.game_server_endpoint, 'game/character', payload)
@@ -123,6 +122,36 @@ class Account():
             else:
                 print()
                 print("Something went wrong creating characters.")
+        except ClientError as e:
+            print("Boto client error:")
+            print(e.response())
+        except Exception as e:
+            print(f"Unexpected error occurred during character creation: \n{e}")
+
+    def delete_character(self, char_name, token):
+        try: 
+            payload = {}
+            payload['CharName'] = char_name
+            if token is None:
+                print("Requesting new token.")
+                token_res, res_code = self.request_token()
+                if res_code == 200:
+                    payload['IdToken'] = token_res
+                else: 
+                    print(f"Character deletion failed. Unable to get auth token due to {res_code} error.")
+            else:
+                payload['IdToken'] = token
+                # extra token validation disabled
+            # is successful, this returns new list of all account characters after character was deleted
+            try:
+                del_char_res = self._delete_request('http://' + self.game_server_endpoint, 'game/character', payload)
+            except Exception as e:
+                print(f"Error deleting character: {e}")
+            if del_char_res.status_code == 200:
+                return del_char_res.json()
+            else:
+                print()
+                print(f"Something went wrong deleting character {char_name}")
         except ClientError as e:
             print("Boto client error:")
             print(e.response())
