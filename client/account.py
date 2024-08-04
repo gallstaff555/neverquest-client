@@ -111,22 +111,17 @@ class Account():
                     print(f"Character creation failed. Unable to get auth token due to {res_code} error.")
             else:
                 payload['IdToken'] = token
-                # extra token validation disabled
-            # is successful, this returns new list of all account characters
-            try:
-                char_res = self._post_request('http://' + self.game_server_endpoint, 'game/character', payload)
-            except Exception as e:
-                print(f"Error validating token: {e}")
-            if char_res.status_code == 200 or char_res.status_code == 201:
-                return char_res.json()['name'][0]
+            char_res = self._post_request('http://' + self.game_server_endpoint, 'game/character', payload)
+            if char_res.status_code == 200:
+                return char_res.json()['name'][0], None   
             else:
-                print()
-                print("Something went wrong creating characters.")
+                char_res_dict = char_res.json()
+                return char_res.json()['name'][0], char_res_dict.get('error')
         except ClientError as e:
             print("Boto client error:")
             print(e.response())
         except Exception as e:
-            print(f"Unexpected error occurred during character creation: \n{e}")
+            print(f"Unexpected error occurred during character creation: {e}")
 
     def delete_character(self, char_name, token):
         try: 
@@ -167,10 +162,8 @@ class Account():
                 payload = {}
                 payload['IdToken'] = token_res
                 token = token_res
-                # This tests if Cognito ID token is valid 
-                print("Token validity check disabled.")
+                #print("Token validity check disabled.")
                 # res = self._post_request(self.account_endpoint, 'account/login', payload)
-                # print(f"Response: {res}\nID token is valid.\n")
                 my_characters = self.get_characters(payload)
             else: 
                 print(f"Login failed with response code: {res_code}")

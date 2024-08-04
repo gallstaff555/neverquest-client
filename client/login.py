@@ -60,11 +60,12 @@ def user_create_account(user_account):
 
 def user_create_character(user_account, character_list, token):
     new_char_name = input("Enter name: ")
-    new_character_list = user_account.create_character(new_char_name, token)
-    if new_character_list != None:
-        print(f"New character {new_char_name} created successfully!")
+    new_character_list, error = user_account.create_character(new_char_name, token)
+    if new_character_list != None and error == None:
+        print(f"\nNew character {new_char_name} created successfully!")
         character_menu(new_character_list, user_account, token)
     else:
+        print(f"\nCharacter name {new_char_name} already in use!") if 'Integrity' in error else print("Error creating character.")
         character_menu(character_list, user_account, token)
 
 def user_delete_character(character_list, user_account, token):
