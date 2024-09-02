@@ -4,18 +4,12 @@
 python3 -m venv .venv
 source .venv/bin/activate
 
-# Start authentication service
-neverquest-authentication service must be running on port 8080
-(hint: python3 authentication.py - run this from neverquest-authentication for local testing)
+# Login
+cd client
+./login.py
 
-python3
-from client.account import Account
-a = Account()
-a.create_account()
-
-
-To login and get token:
-a.login()
+# Start client test character
+./main.py --name "player_one" --player_class "sword" --race "elf" --color "3"
 
 # TODO
 handle server disconnects
