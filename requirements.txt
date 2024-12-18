@@ -1,6 +1,6 @@
 requests
 boto3
-pygame==2.5.2
+pygame-ce==2.5.1
 pyscroll==2.31
 PyTMX==3.32
 PyJWT

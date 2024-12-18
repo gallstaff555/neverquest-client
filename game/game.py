@@ -4,6 +4,7 @@ import pygame, pytmx, pyscroll
 from game.config.config import Config
 from game.actors.my_player import MyPlayer
 from game.actors.player_tracker import PlayerTracker
+from game.entities.player_mouse_reticle import PlayerMouseReticle
 from client.client import Client
 import os,sys
 
@@ -45,10 +46,16 @@ class Game():
             sprite.mask = sprite_mask
             self.collision_group.add(sprite)
 
+        # set up projectiles and aim reticle
+        self.projectiles_group = pygame.sprite.Group()
+        self.reticle = PlayerMouseReticle(self.surface)
+
         #pygame set up
         self.clock = pygame.time.Clock()
         self.scale = pygame.transform.scale
         self.running = True 
+
+
 
     def resource_path(self, relative_path):
         base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
@@ -71,8 +78,10 @@ class Game():
 
             # Player should face the mouse pointer
             mouse_x, mouse_y = pygame.mouse.get_pos()
-            cam_x, cam_y = self.my_map_layer.view_rect.topleft
-            if mouse_x / cfg.CAMERA_SCALE + cam_x < self.player.rect.center[0]:
+            cam_x_offset, cam_y_offset = self.my_map_layer.view_rect.topleft
+            true_mouse_x = mouse_x / cfg.CAMERA_SCALE;
+            true_mouse_y = mouse_y / cfg.CAMERA_SCALE;
+            if true_mouse_x + cam_x_offset < self.player.rect.center[0]:
                 self.player.flipped = True 
             else:
                 self.player.flipped = False
@@ -85,7 +94,7 @@ class Game():
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if cfg.MOVEMENT_TYPE == "mouse":
                         #calculate player true position with camera and camera scale offset 
-                        world_x, world_y = mouse_x / cfg.CAMERA_SCALE + cam_x, mouse_y / cfg.CAMERA_SCALE + cam_y
+                        world_x, world_y = true_mouse_x + cam_x_offset, true_mouse_y + cam_y_offset
                         self.player.move_to = (round(world_x), round(world_y))
 
             # update player positions and draw to screen 
@@ -94,8 +103,12 @@ class Game():
             self.camera_group.center((self.player.rect.center))
             self.camera_group.draw(self.surface)
 
+            #pygame.draw.circle(self.surface, pygame.Color(255,255,255), (true_mouse_x, true_mouse_y), 2, 2)
+            self.reticle.draw(true_mouse_x, true_mouse_y)
+
             self.scale(self.surface, self.screen.get_size(), self.screen)
             pygame.display.flip()
+
 
         self.client.disconnect_from_server(self.player.name)
         pygame.quit()
