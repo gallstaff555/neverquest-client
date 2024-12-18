@@ -1,7 +1,7 @@
 #!/usr/bin/env python3 
 
-import sys
-from account import Account
+import sys, subprocess, os
+from client.account import Account
 
 def main_menu(user_account):
     
@@ -39,9 +39,15 @@ def character_menu(character_list, user_account, token):
     print("5. Exit")
     choice = input("Select an option: ")
     if choice == "1":
-        print("feature not implemented yet")
-        sys.exit()
-        # enter world
+        char_choice = input("Select a character by number: ")
+        if int(char_choice) > 0 and int(char_choice) <= len(character_list):
+            char_selection = character_list[int(char_choice) - 1]
+        else:
+            print("\nPlease try again with valid character.")
+            character_menu(character_list, user_account, token)
+        main_path = "main.py"
+        args = ["--name", char_selection, "--player_class", "sword", "--race", "elf", "--color", "3"]
+        subprocess.run(["python", main_path] + args, capture_output=True, text=True)
     if choice == "2":
         user_create_character(user_account, character_list, token)
     if choice == "3":
