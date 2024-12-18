@@ -17,10 +17,10 @@ class Config:
     FPS = 60
     
     # Server
-    if TEST == False:
+    if TEST == True:
         GAME_SERVER_ENDPOINT = '127.0.0.1'
     else:
-        GAME_SERVER_ENDPOINT = '127.0.0.1'
+        GAME_SERVER_ENDPOINT = '34.219.46.235'
 
     LOGIN_PORT = 8082
     GAME_PORT = 5001
