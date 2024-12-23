@@ -7,6 +7,7 @@ class Client():
     def __init__(self):
         self.connected_to_server = False
         self.other_player_data = {}
+        self.npcs = {}
 
     def send_message(self, host, port, message):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
@@ -47,8 +48,12 @@ class Client():
                 thread = threading.Thread(target=self.update_server, args=(server_endpoint, port, payload,))
                 thread.start()
 
+    # TODO check for performance improvement and avoid converting string to json object
     def update_server(self, server, port, payload):
-        self.other_player_data = json.loads(self.send_message(server, port, f"{payload}"))
+        response_obj = json.loads(self.send_message(server, port, f"{payload}"))
+        # First element is players; second element is npcs
+        self.other_player_data = json.loads(response_obj[0]["players"])
+        self.npcs = json.loads(response_obj[1]["npcs"])
         
     def get_data_from_server(self):
         return self.other_player_data
