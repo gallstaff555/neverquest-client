@@ -31,6 +31,7 @@ class Client():
                 #self.connect_to_server()
                 header = "connect"
                 self.connected_to_server = True
+            # TODO prevent more than 2 threads from getting created    
             else:
                 header = "update"
                 payload = {
@@ -48,6 +49,7 @@ class Client():
                 thread = threading.Thread(target=self.update_server, args=(server_endpoint, port, payload,))
                 thread.start()
 
+    # TODO if connection to server is severed, don't create new messages or threads
     # TODO check for performance improvement and avoid converting string to json object
     def update_server(self, server, port, payload):
         response_obj = json.loads(self.send_message(server, port, f"{payload}"))
