@@ -1,2 +1,2 @@
 #!/bin/bash
-./main.py --name "gallstaff2" --player_class "sword" --race "elf" --color "3"
+./main.py --name "healer1" --player_class "healer" --race "human" --color "1"

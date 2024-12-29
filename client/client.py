@@ -48,6 +48,8 @@ class Client():
                 }
                 thread = threading.Thread(target=self.update_server, args=(server_endpoint, port, payload,))
                 thread.start()
+                print(f"{len(self.npcs)}")
+                print(f"{self.npcs}")
 
     # TODO if connection to server is severed, don't create new messages or threads
     # TODO check for performance improvement and avoid converting string to json object

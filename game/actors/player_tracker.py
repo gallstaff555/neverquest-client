@@ -20,7 +20,10 @@ class PlayerTracker():
                 print(f"New player {key} joined.")
                 race = data[key]["race"]
                 player_class = data[key]["player_class"]
-                color = 3
+                if race == "elf":
+                    color = 3
+                elif race == "human":
+                    color = 1
                 animation_path = f"../assets/{race}/{player_class}/color_{color}"
                 new_player = OtherPlayer(key, data[key]["player_class"], data[key]["race"], ast.literal_eval((data[key]["pos"])), animation_path, cfg.DEFAULT_ANIMATIONS)
                 self.other_players[key] = new_player

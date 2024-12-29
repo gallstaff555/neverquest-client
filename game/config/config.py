@@ -40,7 +40,6 @@ class Config:
     DIAG_SPEED = .7071
 
     # ANIMATION
-    #DEFAULT_ANIMATIONS_LIST = ["walk", "idle"]
     #DEFAULT_ANIMATIONS = {"idle": 6, "walk": 6, "attack": 6, "death": 6} # action: frames
     DEFAULT_ANIMATIONS = {"idle": 6, "walk": 6, "attack": 6}
     
@@ -48,6 +47,10 @@ class Config:
     RACE = "ELF"
     DEFAULT_ELF_ANIMATION_PATH = "../assets/elf/archer/color_3"
     #ELF = {"path": DEFAULT_ELF_ANIMATION_PATH, "frames": DEFAULT_ELF_ANIMATIONS, "race": RACE}
+
+    # HUMAN ANIMATION
+    RACE = "HUMAN"
+    DEFAULT_HUMAN_ANIMATION_PATH = "../assets/human/healer/color_1"
 
     # CONTROLS
     MOVEMENT_TYPE = "keyboard"
