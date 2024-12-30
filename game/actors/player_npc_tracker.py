@@ -1,14 +1,15 @@
-import ast 
+import ast, json
 from game.config.config import Config 
 from game.actors.other_player import OtherPlayer
 
 cfg = Config()
 
-class PlayerTracker():
+class PlayerNPCTracker():
     def __init__(self, my_player, camera_group):
         self.player = my_player
         self.camera_group = camera_group
         self.other_players = {}
+        self.npcs = {}
 
     def update_other_players(self, data, delta_time):
         for key in data:
@@ -20,6 +21,7 @@ class PlayerTracker():
                 print(f"New player {key} joined.")
                 race = data[key]["race"]
                 player_class = data[key]["player_class"]
+                # TODO standardize colors
                 if race == "elf":
                     color = 3
                 elif race == "human":
@@ -38,3 +40,29 @@ class PlayerTracker():
             delete_player = self.other_players[player]
             self.camera_group.remove(delete_player)
             del self.other_players[player]
+
+    def update_npcs(self, data, delta_time):
+
+        for key in data:
+
+            npc = json.loads(data[key])
+
+            if key in self.npcs:
+                self.npcs[key].update_pos(ast.literal_eval(npc["location"]), False, False, False, delta_time)
+            else: 
+            # add new npc
+                print(f"New NPC id:{key} added.")
+                #race = data[key]["race"]
+                race = "human"
+                #player_class = data[key]["player_class"]
+                player_class = "healer"
+                # TODO standardize colors
+                if race == "elf":
+                    color = 3
+                elif race == "human":
+                    color = 1
+                animation_path = f"../assets/{race}/{player_class}/color_{color}"
+                #new_player = OtherPlayer(key, data[key]["player_class"], data[key]["race"], ast.literal_eval((data[key]["pos"])), animation_path, cfg.DEFAULT_ANIMATIONS)
+                new_npc = OtherPlayer(key, "healer", "human", ast.literal_eval((npc["location"])), animation_path, cfg.DEFAULT_ANIMATIONS)
+                self.npcs[key] = new_npc
+                self.camera_group.add(new_npc)

@@ -54,6 +54,7 @@ class Config:
 
     # CONTROLS
     MOVEMENT_TYPE = "keyboard"
+    #MOVEMENT_TYPE = "mouse"
     key_left = pygame.K_LEFT
     key_right = pygame.K_RIGHT
     key_down = pygame.K_DOWN

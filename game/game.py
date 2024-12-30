@@ -3,7 +3,7 @@
 import pygame, pytmx, pyscroll
 from game.config.config import Config
 from game.actors.my_player import MyPlayer
-from game.actors.player_tracker import PlayerTracker
+from game.actors.player_npc_tracker import PlayerNPCTracker
 from game.entities.player_mouse_reticle import PlayerMouseReticle
 from client.client import Client
 import os,sys
@@ -31,7 +31,9 @@ class Game():
         animation_path = f"../assets/{race}/{player_class}/color_{color}"
         self.player = MyPlayer(name, player_class, race, cfg.PLAYER_START, animation_path, cfg.DEFAULT_ANIMATIONS)
         self.camera_group.add(self.player)
-        self.player_tracker = PlayerTracker(self.player, self.camera_group)
+        
+        # Track other players and npcs
+        self.player_npc_tracker = PlayerNPCTracker(self.player, self.camera_group)
 
         # set up invisible collision sprites
         self.collision_group = pygame.sprite.Group()
@@ -74,13 +76,15 @@ class Game():
             last_time = current_time
 
             self.client.sync_server(self.player, cfg.GAME_SERVER_ENDPOINT, cfg.GAME_PORT)
-            self.player_tracker.update_other_players(self.client.get_data_from_server(), delta_time)
+            self.player_npc_tracker.update_other_players(self.client.get_other_player_location(), delta_time)
+            # TODO add npc location update
+            self.player_npc_tracker.update_npcs(self.client.get_npc_location(), delta_time)
 
             # Player should face the mouse pointer
             mouse_x, mouse_y = pygame.mouse.get_pos()
             cam_x_offset, cam_y_offset = self.my_map_layer.view_rect.topleft
-            true_mouse_x = mouse_x / cfg.CAMERA_SCALE;
-            true_mouse_y = mouse_y / cfg.CAMERA_SCALE;
+            true_mouse_x = mouse_x / cfg.CAMERA_SCALE
+            true_mouse_y = mouse_y / cfg.CAMERA_SCALE
             if true_mouse_x + cam_x_offset < self.player.rect.center[0]:
                 self.player.flipped = True 
             else:

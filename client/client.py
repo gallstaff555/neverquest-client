@@ -48,8 +48,6 @@ class Client():
                 }
                 thread = threading.Thread(target=self.update_server, args=(server_endpoint, port, payload,))
                 thread.start()
-                print(f"{len(self.npcs)}")
-                print(f"{self.npcs}")
 
     # TODO if connection to server is severed, don't create new messages or threads
     # TODO check for performance improvement and avoid converting string to json object
@@ -59,6 +57,9 @@ class Client():
         self.other_player_data = json.loads(response_obj[0]["players"])
         self.npcs = json.loads(response_obj[1]["npcs"])
         
-    def get_data_from_server(self):
+    def get_other_player_location(self):
         return self.other_player_data
+    
+    def get_npc_location(self):
+        return self.npcs
     
