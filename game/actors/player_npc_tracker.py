@@ -48,21 +48,21 @@ class PlayerNPCTracker():
             npc = json.loads(data[key])
 
             if key in self.npcs:
-                self.npcs[key].update_pos(ast.literal_eval(npc["location"]), False, False, False, delta_time)
+                self.npcs[key].update_pos(ast.literal_eval(npc["pos"]), npc["flipped"], npc["moving"], npc["attacking"], delta_time)
             else: 
             # add new npc
                 print(f"New NPC id:{key} added.")
                 #race = data[key]["race"]
-                race = "human"
+                race = npc["race"]
                 #player_class = data[key]["player_class"]
-                player_class = "healer"
+                npc_class = npc["npc_class"]
                 # TODO standardize colors
                 if race == "elf":
                     color = 3
                 elif race == "human":
                     color = 1
-                animation_path = f"../assets/{race}/{player_class}/color_{color}"
+                animation_path = f"../assets/{race}/{npc_class}/color_{color}"
                 #new_player = OtherPlayer(key, data[key]["player_class"], data[key]["race"], ast.literal_eval((data[key]["pos"])), animation_path, cfg.DEFAULT_ANIMATIONS)
-                new_npc = OtherPlayer(key, "healer", "human", ast.literal_eval((npc["location"])), animation_path, cfg.DEFAULT_ANIMATIONS)
+                new_npc = OtherPlayer(key, npc_class, race, ast.literal_eval((npc["pos"])), animation_path, cfg.DEFAULT_ANIMATIONS)
                 self.npcs[key] = new_npc
                 self.camera_group.add(new_npc)

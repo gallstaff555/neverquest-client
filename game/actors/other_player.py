@@ -6,16 +6,6 @@ class OtherPlayer(BasePlayer):
         self.end_pos = start_pos
         self.interpolation_factor = 0.0
 
-    # def old_update_pos(self, new_coords, flipped, moving, attacking):
-    #     #print(last_update)
-    #     self.rect.x = new_coords[0]
-    #     self.rect.y = new_coords[1]
-    #     self.flipped = flipped
-    #     self.moving = moving
-    #     if attacking == "True" and (self.attacking == False or self.attacking == "False"):
-    #         self.animate_player.index = 0
-    #     self.attacking = attacking
-
     def update_pos(self, new_coords, flipped, moving, attacking, delta_time):
         self.interpolation_factor += delta_time
 

@@ -51,17 +51,6 @@ class AnimatePlayer():
             
     def animate_other_player(self, player):
 
-        # if player.attacking == "True":
-        #     action = "attack"
-        # elif player.moving == "True":
-        #     action = "walk"
-        # else:
-        #     action = "idle"
-
-        # if player.flipped == "True":
-        #     self.player_frames = self.animation_map[f"{action}_flipped"]
-        # else:
-        #     self.player_frames = self.animation_map[f"{action}"] 
         if player.attacking == "True":
             if player.flipped == "True":
                 self.player_frames = self.animation_map["attack_flipped"]
