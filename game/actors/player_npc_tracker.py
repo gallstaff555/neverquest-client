@@ -1,6 +1,7 @@
 import ast, json
 from game.config.config import Config 
 from game.actors.other_player import OtherPlayer
+from game.actors.npc import NPC
 
 cfg = Config()
 
@@ -16,7 +17,7 @@ class PlayerNPCTracker():
             if key == self.player.name:
                 pass
             elif key in self.other_players:
-                self.other_players[key].update_pos(ast.literal_eval(data[key]["pos"]), data[key]["flipped"], data[key]["moving"], data[key]["attacking"], delta_time)
+                self.other_players[key].update_pos(data[key]["pos"], data[key]["flipped"], data[key]["moving"], data[key]["attacking"], delta_time)
             else: # add new player
                 print(f"New player {key} joined.")
                 race = data[key]["race"]
@@ -27,7 +28,7 @@ class PlayerNPCTracker():
                 elif race == "human":
                     color = 1
                 animation_path = f"../assets/{race}/{player_class}/color_{color}"
-                new_player = OtherPlayer(key, data[key]["player_class"], data[key]["race"], ast.literal_eval((data[key]["pos"])), animation_path, cfg.DEFAULT_ANIMATIONS)
+                new_player = OtherPlayer(key, data[key]["player_class"], data[key]["race"], data[key]["pos"], animation_path, cfg.DEFAULT_ANIMATIONS)
                 self.other_players[key] = new_player
                 self.camera_group.add(new_player)
         # look for players that disconnected by comparing players to keys not found
@@ -42,11 +43,8 @@ class PlayerNPCTracker():
             del self.other_players[player]
 
     def update_npcs(self, data, delta_time):
-
         for key in data:
-
             npc = json.loads(data[key])
-
             if key in self.npcs:
                 self.npcs[key].update_pos(ast.literal_eval(npc["pos"]), npc["flipped"], npc["moving"], npc["attacking"], delta_time)
             else: 
@@ -62,7 +60,7 @@ class PlayerNPCTracker():
                 elif race == "human":
                     color = 1
                 animation_path = f"../assets/{race}/{npc_class}/color_{color}"
-                #new_player = OtherPlayer(key, data[key]["player_class"], data[key]["race"], ast.literal_eval((data[key]["pos"])), animation_path, cfg.DEFAULT_ANIMATIONS)
-                new_npc = OtherPlayer(key, npc_class, race, ast.literal_eval((npc["pos"])), animation_path, cfg.DEFAULT_ANIMATIONS)
+
+                new_npc = NPC(key, npc_class, race, ast.literal_eval(npc["pos"]), animation_path, cfg.DEFAULT_ANIMATIONS)
                 self.npcs[key] = new_npc
                 self.camera_group.add(new_npc)

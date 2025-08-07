@@ -39,7 +39,7 @@ class Client():
                     "name": f"{player.name}",
                     "player_class": f"{player.player_class}",
                     "race": f"{player.race}",
-                    "pos": f"{(player.rect.x, player.rect.y)}",
+                    "pos": [player.rect.x, player.rect.y],
                     "flipped": f"{player.flipped}",
                     "appearance": f"{player.race}", 
                     "moving": f"{player.moving}",

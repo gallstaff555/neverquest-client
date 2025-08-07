@@ -1,6 +1,7 @@
 import pygame
 from game.actors.animation_frame_generator import AnimationFrameGenerator
 from game.config.config import Config
+from game.config.utils import to_bool
 
 cfg = Config()
 
@@ -51,18 +52,18 @@ class AnimatePlayer():
             
     def animate_other_player(self, player):
 
-        if player.attacking == "True":
-            if player.flipped == "True":
+        if to_bool(player.attacking) == True:
+            if to_bool(player.flipped) == True:
                 self.player_frames = self.animation_map["attack_flipped"]
             else: 
                 self.player_frames = self.animation_map["attack"]
-        elif player.moving != "True":
-            if player.flipped == "True":
+        elif to_bool(player.moving) != True:
+            if to_bool(player.flipped) == True:
                 self.player_frames = self.animation_map["idle_flipped"]
             else: 
                 self.player_frames = self.animation_map["idle"]
         else:
-            if player.flipped == "True":
+            if to_bool(player.flipped) == True:
                 self.player_frames = self.animation_map["walk_flipped"]  
             else:
                 self.player_frames = self.animation_map["walk"]
@@ -75,3 +76,31 @@ class AnimatePlayer():
                 self.index = 0
             player.image = self.player_frames[self.index]
             player.mask = self.player_mask[self.index]
+
+    # Note: World server sends booleans, not truthy strings
+    def animate_npc(self, npc):
+        if to_bool(npc.attacking) == True:
+            if to_bool(npc.flipped) == True:
+                self.player_frames = self.animation_map["attack_flipped"]
+            else: 
+                self.player_frames = self.animation_map["attack"]
+        elif to_bool(npc.moving) != True:
+            if to_bool(npc.flipped) == True:
+                self.player_frames = self.animation_map["idle_flipped"]
+            else: 
+                self.player_frames = self.animation_map["idle"]
+        else:
+            if to_bool(npc.flipped) == True:
+                self.player_frames = self.animation_map["walk_flipped"]  
+            else:
+                self.player_frames = self.animation_map["walk"]
+
+        now = pygame.time.get_ticks()
+        if now - self.last_update > cfg.PLAYER_ANIMATION_TIMER:
+            self.last_update = now
+            self.index += 1
+            if self.index >= len(self.player_frames):
+                self.index = 0
+            npc.image = self.player_frames[self.index]
+            npc.mask = self.player_mask[self.index]
+

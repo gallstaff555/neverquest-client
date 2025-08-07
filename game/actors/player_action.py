@@ -113,6 +113,7 @@ class PlayerAction():
                 player.rect.x -= player.direction_x * delta_time * 101 * player.speed
                 player.rect.y -= player.direction_y * delta_time * 101 * player.speed
 
+        # TODO implement mouse movement
         elif cfg.MOVEMENT_TYPE == "mouse" and player.move_to:
             if self.move_by_coordinates(player, collision_group):
                 player.move_to = None  
