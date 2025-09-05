@@ -1,4 +1,5 @@
 import pygame
+from typing import Any
 from game.config.config import Config
 from game.actors.animate_player import AnimatePlayer
 
@@ -13,7 +14,7 @@ class BasePlayer(pygame.sprite.Sprite):
         self.animate_player = AnimatePlayer(animation_path, animation_frames)
         self.image = self.animate_player.player_frames[0]
         self.mask = self.animate_player.player_mask[0]
-        self.rect = self.image.get_rect(center = start_pos)
+        self.rect: Any = self.image.get_rect(center = start_pos)
         self.pos = start_pos
         self.move_to = None
         self.moving = False
